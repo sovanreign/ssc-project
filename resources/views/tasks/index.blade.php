@@ -69,6 +69,7 @@
                 <tr class="bg-[#1e3a8a] text-white">
                     <th class="px-6 py-4 text-center">#</th>
                     <th class="px-6 py-4 text-left">Task</th>
+                    <th class="px-6 py-4 text-left">Description</th>
                     <th class="px-6 py-4 text-left">Project</th>
                     <th class="px-6 py-4 text-left">Assigned To</th>
                     <th class="px-6 py-4 text-center">Status</th>
@@ -80,6 +81,9 @@
                     <tr class="hover:bg-gray-50 transition-colors duration-200">
                         <td class="px-6 py-4 text-center text-blue-600 font-medium">{{ $task->id }}</td>
                         <td class="px-6 py-4 text-blue-600 font-medium">{{ $task->name }}</td>
+                        <td class="px-6 py-4 text-gray-600">
+                            {{ Str::limit($task->description, 50) }}
+                        </td>
                         <td class="px-6 py-4">{{ $task->project->name }}</td>
                         <td class="px-6 py-4">{{ $task->assignedUser->name }}</td>
                         <td class="px-6 py-4 text-center">
@@ -96,7 +100,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="px-6 py-4 text-center text-gray-500">No tasks found</td>
+                        <td colspan="7" class="px-6 py-4 text-center text-gray-500">No tasks found</td>
                     </tr>
                 @endforelse
             </tbody>

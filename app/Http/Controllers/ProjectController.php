@@ -18,7 +18,9 @@ class ProjectController extends Controller
                 $query->where('status', $request->status);
             }
 
-            $projects = $query->orderBy('id', 'asc')->get();
+            $projects = $query->withCount('tasks')
+                ->orderBy('id', 'asc')
+                ->get();
 
             return view('projects.index', [
                 'projects' => $projects,
