@@ -185,9 +185,9 @@
                         <div class="p-6">
                             <div class="flex justify-between items-center mb-6">
                                 <h3 class="text-2xl font-bold">Projects Overview</h3>
-                                <button onclick="window.location.href='{{ route('projects.index') }}'" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                                <a href="{{ route('projects.index') }}" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
                                     View
-                                </button>
+                                </a>
                             </div>
                             <div class="overflow-x-auto">
                                 <table class="w-full whitespace-nowrap">
@@ -202,18 +202,29 @@
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-gray-200">
-                                        <tr class="hover:bg-gray-50 transition-colors duration-200">
-                                            <td class="px-6 py-4 text-center">1</td>
-                                            <td class="px-6 py-4 font-medium">Project 1</td>
-                                            <td class="px-6 py-4 text-center">1</td>
-                                            <td class="px-6 py-4">
-                                                <span class="inline-flex items-center justify-center px-3 py-1 text-sm font-medium rounded-full bg-yellow-100 text-yellow-800 transition-all duration-300 hover:bg-yellow-200">
-                                                    In Progress
-                                                </span>
-                                            </td>
-                                            <td class="px-6 py-4 text-center">mm/dd/yyyy</td>
-                                            <td class="px-6 py-4 text-center">mm/dd/yyyy</td>
-                                        </tr>
+                                        @forelse($projects as $project)
+                                            <tr class="hover:bg-gray-50 transition-colors duration-200">
+                                                <td class="px-6 py-4 text-center">{{ $project->id }}</td>
+                                                <td class="px-6 py-4 font-medium">{{ $project->name }}</td>
+                                                <td class="px-6 py-4 text-center">{{ $project->task_count }}</td>
+                                                <td class="px-6 py-4">
+                                                    <span class="inline-flex items-center justify-center px-3 py-1 text-sm font-medium rounded-full 
+                                                        @if($project->status === 'todo') bg-gray-100 text-gray-800
+                                                        @elseif($project->status === 'in_progress') bg-yellow-100 text-yellow-800
+                                                        @elseif($project->status === 'completed') bg-green-100 text-green-800
+                                                        @else bg-red-100 text-red-800
+                                                        @endif">
+                                                        {{ ucfirst(str_replace('_', ' ', $project->status)) }}
+                                                    </span>
+                                                </td>
+                                                <td class="px-6 py-4 text-center">{{ $project->start_date->format('M d, Y') }}</td>
+                                                <td class="px-6 py-4 text-center">{{ $project->end_date->format('M d, Y') }}</td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="6" class="px-6 py-4 text-center text-gray-500">No projects found</td>
+                                            </tr>
+                                        @endforelse
                                     </tbody>
                                 </table>
                             </div>
