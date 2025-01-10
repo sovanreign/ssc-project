@@ -25,4 +25,10 @@ class Project extends Model
     {
         return $this->hasMany(Task::class);
     }
+
+    // Add accessor for task count if needed
+    public function getTaskCountAttribute()
+    {
+        return $this->tasks()->count();
+    }
 } 

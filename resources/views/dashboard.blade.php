@@ -206,7 +206,7 @@
                                             <tr class="hover:bg-gray-50 transition-colors duration-200">
                                                 <td class="px-6 py-4 text-center">{{ $project->id }}</td>
                                                 <td class="px-6 py-4 font-medium">{{ $project->name }}</td>
-                                                <td class="px-6 py-4 text-center">{{ $project->task_count }}</td>
+                                                <td class="px-6 py-4 text-center">{{ $project->tasks_count }}</td>
                                                 <td class="px-6 py-4">
                                                     <span class="inline-flex items-center justify-center px-3 py-1 text-sm font-medium rounded-full 
                                                         @if($project->status === 'todo') bg-gray-100 text-gray-800
@@ -217,8 +217,8 @@
                                                         {{ ucfirst(str_replace('_', ' ', $project->status)) }}
                                                     </span>
                                                 </td>
-                                                <td class="px-6 py-4 text-center">{{ $project->start_date->format('M d, Y') }}</td>
-                                                <td class="px-6 py-4 text-center">{{ $project->end_date->format('M d, Y') }}</td>
+                                                <td class="px-6 py-4 text-center">{{ $project->start_date ? $project->start_date->format('M d, Y') : 'N/A' }}</td>
+                                                <td class="px-6 py-4 text-center">{{ $project->end_date ? $project->end_date->format('M d, Y') : 'N/A' }}</td>
                                             </tr>
                                         @empty
                                             <tr>
