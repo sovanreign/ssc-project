@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
     ];
 
     /**
@@ -44,5 +45,29 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    protected $attributes = [
+        'role' => 'user',
+    ];
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class, 'assigned_to');
+    }
+
+    public function getTaskCountAttribute()
+    {
+        return $this->tasks()->count();
+    }
+
+    public function getProjectCountAttribute()
+    {
+        return $this->tasks()->distinct('project_id')->count('project_id');
+    }
+
+    public function getStarsAttribute()
+    {
+        return $this->tasks()->where('status', 'completed')->count() * 5;
     }
 }

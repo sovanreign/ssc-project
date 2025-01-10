@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\DashboardController;
 
 Route::get('/', function () {
@@ -25,6 +26,9 @@ Route::middleware(['auth'])->group(function () {
     // Task routes
     Route::resource('tasks', TaskController::class);
 
+    // User routes
+    Route::resource('users', UserController::class);
+
     // Other routes
     Route::get('/leaderboard', function () {
         return view('leaderboard');
@@ -34,15 +38,7 @@ Route::middleware(['auth'])->group(function () {
         return view('reports');
     })->name('reports');
 
-    Route::get('/users', function () {
-        return view('users.index');
-    })->name('users.index');
-
     Route::get('/discussions', function () {
         return view('discussions.index');
     })->name('discussions.index');
-
-    Route::get('/projects/{project}', [ProjectController::class, 'show'])->name('projects.show');
-
-    Route::get('/tasks/{task}', [TaskController::class, 'show'])->name('tasks.show');
 });
