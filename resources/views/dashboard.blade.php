@@ -167,11 +167,11 @@
                         </select>
                         <div class="flex space-x-16">
                             <div class="text-center">
-                                <div class="text-4xl font-bold">0</div>
+                                <div class="text-4xl font-bold">{{ $totalTasks }}</div>
                                 <div>Total Tasks</div>
                             </div>
                             <div class="text-center">
-                                <div class="text-4xl font-bold">0</div>
+                                <div class="text-4xl font-bold">{{ $totalProjects }}</div>
                                 <div>Total Projects</div>
                             </div>
                         </div>
