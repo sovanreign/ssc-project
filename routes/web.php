@@ -41,4 +41,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/discussions', function () {
         return view('discussions.index');
     })->name('discussions.index');
+
+    Route::get('/projects/{project}', [ProjectController::class, 'show'])->name('projects.show');
+
+    Route::get('/tasks/{task}', [TaskController::class, 'show'])->name('tasks.show');
 });

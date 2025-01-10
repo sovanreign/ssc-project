@@ -103,4 +103,17 @@ class TaskController extends Controller
             return back()->with('error', 'Error deleting task: ' . $e->getMessage());
         }
     }
+
+    public function show(Task $task)
+    {
+        return response()->json([
+            'id' => $task->id,
+            'name' => $task->name,
+            'description' => $task->description,
+            'project_name' => $task->project->name,
+            'assigned_to' => $task->assignedUser->name,
+            'due_date' => $task->end_date->format('M d, Y'),
+            'status' => $task->status,
+        ]);
+    }
 } 

@@ -71,7 +71,7 @@
             </thead>
             <tbody class="divide-y divide-gray-200">
                 @forelse($projects as $project)
-                    <tr class="hover:bg-gray-50 transition-colors duration-200">
+                    <tr class="hover:bg-gray-50 transition-colors duration-200 cursor-pointer" onclick="showProjectDetails({{ $project->id }})">
                         <td class="px-6 py-4 text-center text-blue-600 font-medium">{{ $project->id }}</td>
                         <td class="px-6 py-4 text-blue-600 font-medium">{{ $project->name }}</td>
                         <td class="px-6 py-4 text-gray-600">
@@ -130,6 +130,46 @@
     </div>
 </div>
 
+<!-- Project Details Modal -->
+<div id="projectDetailsModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full">
+    <div class="relative top-20 mx-auto p-5 border w-4/5 shadow-lg rounded-md bg-white">
+        <div class="flex justify-between items-center">
+            <h3 class="text-2xl font-bold">Project Details</h3>
+            <button onclick="closeProjectDetails()" class="text-gray-600 hover:text-gray-800">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        <div class="mt-4">
+            <div class="space-y-4">
+                <div>
+                    <h4 class="text-lg font-semibold">Project Name</h4>
+                    <p id="projectName" class="text-gray-600"></p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold">Description</h4>
+                    <p id="projectDescription" class="text-gray-600"></p>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <h4 class="text-lg font-semibold">Start Date</h4>
+                        <p id="projectStartDate" class="text-gray-600"></p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold">Due Date</h4>
+                        <p id="projectEndDate" class="text-gray-600"></p>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold">Status</h4>
+                    <p id="projectStatus" class="text-gray-600"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @push('scripts')
 <script>
     const modal = document.getElementById('addProjectModal');
@@ -165,6 +205,23 @@
     @if($errors->any())
         openModal();
     @endif
+
+    function showProjectDetails(projectId) {
+        fetch(`/projects/${projectId}`)
+            .then(response => response.json())
+            .then(project => {
+                document.getElementById('projectName').textContent = project.name;
+                document.getElementById('projectDescription').textContent = project.description;
+                document.getElementById('projectStartDate').textContent = project.start_date;
+                document.getElementById('projectEndDate').textContent = project.end_date;
+                document.getElementById('projectStatus').textContent = project.status.replace('_', ' ').toUpperCase();
+                document.getElementById('projectDetailsModal').classList.remove('hidden');
+            });
+    }
+
+    function closeProjectDetails() {
+        document.getElementById('projectDetailsModal').classList.add('hidden');
+    }
 </script>
 @endpush
 @endsection 

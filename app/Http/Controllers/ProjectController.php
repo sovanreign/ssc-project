@@ -95,4 +95,16 @@ class ProjectController extends Controller
             return back()->with('error', 'Error deleting project: ' . $e->getMessage());
         }
     }
+
+    public function show(Project $project)
+    {
+        return response()->json([
+            'id' => $project->id,
+            'name' => $project->name,
+            'description' => $project->description,
+            'start_date' => $project->start_date->format('M d, Y'),
+            'end_date' => $project->end_date->format('M d, Y'),
+            'status' => $project->status,
+        ]);
+    }
 } 
