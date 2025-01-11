@@ -9,6 +9,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\DiscussionController;
+use App\Http\Controllers\ProfileController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -42,6 +43,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/discussions/{discussion}', [DiscussionController::class, 'show'])->name('discussions.show');
     Route::post('/discussions/{discussion}/messages', [DiscussionController::class, 'storeMessage'])->name('discussions.messages.store');
     Route::post('/discussions/{discussion}/end', [DiscussionController::class, 'endDiscussion'])->name('discussions.end');
+    Route::delete('/discussions/{discussion}', [DiscussionController::class, 'destroy'])->name('discussions.destroy');
+
+    // Profile routes
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
     Route::post('/projects/{project}/complete', [ProjectController::class, 'markAsComplete'])->name('projects.complete');
 

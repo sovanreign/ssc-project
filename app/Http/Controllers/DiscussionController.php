@@ -58,4 +58,15 @@ class DiscussionController extends Controller
     {
         return back()->with('success', 'Discussion ended successfully.');
     }
+
+    public function destroy(Discussion $discussion)
+    {
+        if (auth()->user()->role !== 'admin') {
+            return back()->with('error', 'Only administrators can delete discussions.');
+        }
+
+        $discussion->delete();
+        return redirect()->route('discussions.index')
+            ->with('success', 'Discussion deleted successfully.');
+    }
 } 
