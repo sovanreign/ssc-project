@@ -7,6 +7,7 @@ use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LeaderboardController;
+use App\Http\Controllers\ReportController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -32,10 +33,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Other routes
     Route::get('/leaderboard', [LeaderboardController::class, 'index'])->name('leaderboard');
-
-    Route::get('/reports', function () {
-        return view('reports');
-    })->name('reports');
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports');
 
     Route::get('/discussions', function () {
         return view('discussions.index');
