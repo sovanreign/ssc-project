@@ -107,4 +107,23 @@ class ProjectController extends Controller
             'status' => $project->status,
         ]);
     }
+
+    public function markAsComplete(Project $project)
+    {
+        try {
+            $project->update([
+                'status' => 'completed'
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Project marked as complete successfully'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error marking project as complete'
+            ], 500);
+        }
+    }
 } 

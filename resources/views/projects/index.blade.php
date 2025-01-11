@@ -66,6 +66,7 @@
                     <th class="px-6 py-4 text-center">#</th>
                     <th class="px-6 py-4 text-left">Project</th>
                     <th class="px-6 py-4 text-left">Description</th>
+                    <th class="px-6 py-4 text-center">Status</th>
                     <th class="px-6 py-4 text-center">Number of Task</th>
                 </tr>
             </thead>
@@ -77,11 +78,21 @@
                         <td class="px-6 py-4 text-gray-600">
                             {{ Str::limit($project->description, 100) }}
                         </td>
+                        <td class="px-6 py-4 text-center">
+                            <span class="px-3 py-1 rounded-full text-sm font-medium
+                                @if($project->status === 'todo') bg-gray-100 text-gray-800
+                                @elseif($project->status === 'in_progress') bg-yellow-100 text-yellow-800
+                                @elseif($project->status === 'completed') bg-green-100 text-green-800
+                                @else bg-red-100 text-red-800
+                                @endif">
+                                {{ ucfirst(str_replace('_', ' ', $project->status)) }}
+                            </span>
+                        </td>
                         <td class="px-6 py-4 text-center text-blue-600 font-medium">{{ $project->task_count }}</td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="4" class="px-6 py-4 text-center text-gray-500">No projects found</td>
+                        <td colspan="5" class="px-6 py-4 text-center text-gray-500">No projects found</td>
                     </tr>
                 @endforelse
             </tbody>
@@ -165,6 +176,13 @@
                     <h4 class="text-lg font-semibold">Status</h4>
                     <p id="projectStatus" class="text-gray-600"></p>
                 </div>
+                <div class="flex justify-end mt-6">
+                    <button id="completeProjectBtn" 
+                            onclick="completeProject(document.querySelector('#projectDetailsModal').dataset.projectId)"
+                            class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-all duration-300">
+                        Mark as Complete
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -215,12 +233,44 @@
                 document.getElementById('projectStartDate').textContent = project.start_date;
                 document.getElementById('projectEndDate').textContent = project.end_date;
                 document.getElementById('projectStatus').textContent = project.status.replace('_', ' ').toUpperCase();
+                
+                // Store project ID for complete button
+                document.querySelector('#projectDetailsModal').dataset.projectId = project.id;
+                
+                // Show/hide complete button based on status
+                const completeBtn = document.getElementById('completeProjectBtn');
+                if (project.status === 'completed') {
+                    completeBtn.classList.add('hidden');
+                } else {
+                    completeBtn.classList.remove('hidden');
+                }
+                
                 document.getElementById('projectDetailsModal').classList.remove('hidden');
             });
     }
 
     function closeProjectDetails() {
         document.getElementById('projectDetailsModal').classList.add('hidden');
+    }
+
+    function completeProject(projectId) {
+        if (!confirm('Are you sure you want to mark this project as complete?')) {
+            return;
+        }
+
+        fetch(`/projects/${projectId}/complete`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.reload();
+            }
+        });
     }
 </script>
 @endpush

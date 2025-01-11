@@ -116,4 +116,23 @@ class TaskController extends Controller
             'status' => $task->status,
         ]);
     }
+
+    public function markAsComplete(Task $task)
+    {
+        try {
+            $task->update([
+                'status' => 'completed'
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Task marked as complete successfully'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error marking task as complete'
+            ], 500);
+        }
+    }
 } 

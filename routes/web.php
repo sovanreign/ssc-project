@@ -41,4 +41,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/discussions', function () {
         return view('discussions.index');
     })->name('discussions.index');
+
+    Route::post('/projects/{project}/complete', [ProjectController::class, 'markAsComplete'])->name('projects.complete');
+
+    Route::post('/tasks/{task}/complete', [TaskController::class, 'markAsComplete'])->name('tasks.complete');
 });

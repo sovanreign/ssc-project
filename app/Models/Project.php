@@ -22,6 +22,10 @@ class Project extends Model
         'end_date' => 'datetime'
     ];
 
+    protected $attributes = [
+        'status' => 'todo',
+    ];
+
     public function tasks()
     {
         return $this->hasMany(Task::class);
@@ -31,5 +35,16 @@ class Project extends Model
     public function getTaskCountAttribute()
     {
         return $this->tasks()->count();
+    }
+
+    public function getStatusColorAttribute()
+    {
+        return match($this->status) {
+            'todo' => 'gray',
+            'in_progress' => 'yellow',
+            'completed' => 'green',
+            'overdue' => 'red',
+            default => 'gray',
+        };
     }
 } 

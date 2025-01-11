@@ -210,6 +210,13 @@
                     <h4 class="text-lg font-semibold">Status</h4>
                     <p id="taskStatus" class="text-gray-600"></p>
                 </div>
+                <div class="flex justify-end mt-6">
+                    <button id="completeTaskBtn" 
+                            onclick="completeTask(document.querySelector('#taskDetailsModal').dataset.taskId)"
+                            class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-all duration-300">
+                        Mark as Complete
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -261,12 +268,44 @@
                 document.getElementById('taskAssignedTo').textContent = task.assigned_to;
                 document.getElementById('taskDueDate').textContent = task.due_date;
                 document.getElementById('taskStatus').textContent = task.status.replace('_', ' ').toUpperCase();
+                
+                // Store task ID for complete button
+                document.querySelector('#taskDetailsModal').dataset.taskId = task.id;
+                
+                // Show/hide complete button based on status
+                const completeBtn = document.getElementById('completeTaskBtn');
+                if (task.status === 'completed') {
+                    completeBtn.classList.add('hidden');
+                } else {
+                    completeBtn.classList.remove('hidden');
+                }
+                
                 document.getElementById('taskDetailsModal').classList.remove('hidden');
             });
     }
 
     function closeTaskDetails() {
         document.getElementById('taskDetailsModal').classList.add('hidden');
+    }
+
+    function completeTask(taskId) {
+        if (!confirm('Are you sure you want to mark this task as complete?')) {
+            return;
+        }
+
+        fetch(`/tasks/${taskId}/complete`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.reload();
+            }
+        });
     }
 </script>
 @endpush
