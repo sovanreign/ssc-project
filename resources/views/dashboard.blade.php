@@ -202,9 +202,10 @@
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-gray-200">
+                                        @php $projectRank = 1; @endphp
                                         @forelse($projects as $project)
                                             <tr class="hover:bg-gray-50 transition-colors duration-200">
-                                                <td class="px-6 py-4 text-center">{{ $project->id }}</td>
+                                                <td class="px-6 py-4 text-center">{{ $projectRank++ }}</td>
                                                 <td class="px-6 py-4 font-medium">{{ $project->name }}</td>
                                                 <td class="px-6 py-4 text-center">{{ $project->tasks_count }}</td>
                                                 <td class="px-6 py-4">
@@ -231,52 +232,39 @@
                         </div>
                     </div>
 
-                    <!-- Ranking -->
-                    <div class="col-span-4 bg-white rounded-lg shadow">
-                        <div class="p-4">
-                            <h3 class="text-lg font-bold mb-4">Rankings</h3>
-                            <div class="overflow-x-auto">
-                                <table class="w-full">
-                                    <thead>
-                                        <tr class="bg-[#1e3a8a] text-white">
-                                            <th class="px-3 py-2 text-center">Rank</th>
-                                            <th class="px-3 py-2 text-left">Name</th>
-                                            <th class="px-3 py-2 text-center">Stars</th>
-                                            <th class="px-3 py-2 text-center">Tasks</th>
-                                            <th class="px-3 py-2 text-center">Projects</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-gray-100">
+                    <!-- Rankings Table -->
+                    <div class="col-span-4 bg-white rounded-lg shadow-lg p-6">
+                        <h2 class="text-xl font-bold mb-4">Rankings</h2>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full">
+                                <thead>
+                                    <tr class="bg-[#1e3a8a] text-white">
+                                        <th class="px-6 py-3 text-center">Rank</th>
+                                        <th class="px-6 py-3 text-left">Name</th>
+                                        <th class="px-6 py-3 text-center">Stars</th>
+                                        <th class="px-6 py-3 text-center">Tasks</th>
+                                        <th class="px-6 py-3 text-center">Projects</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200">
+                                    @php $rank = 1; @endphp
+                                    @forelse($users as $user)
                                         <tr class="hover:bg-gray-50">
-                                            <td class="px-3 py-2 text-center font-medium">1</td>
-                                            <td class="px-3 py-2 text-left">Angelene S. Aquino</td>
-                                            <td class="px-3 py-2 text-center">
-                                                <span class="text-yellow-500">★</span> 15
+                                            <td class="px-6 py-4 text-center">{{ $rank++ }}</td>
+                                            <td class="px-6 py-4">{{ $user['name'] }}</td>
+                                            <td class="px-6 py-4 text-center">
+                                                <span class="text-yellow-500">★</span> {{ $user['stars'] }}
                                             </td>
-                                            <td class="px-3 py-2 text-center">3</td>
-                                            <td class="px-3 py-2 text-center">1</td>
+                                            <td class="px-6 py-4 text-center">{{ $user['task_count'] }}</td>
+                                            <td class="px-6 py-4 text-center">{{ $user['project_count'] }}</td>
                                         </tr>
-                                        <tr class="hover:bg-gray-50">
-                                            <td class="px-3 py-2 text-center font-medium">2</td>
-                                            <td class="px-3 py-2 text-left">Billy S. Ramirez</td>
-                                            <td class="px-3 py-2 text-center">
-                                                <span class="text-yellow-500">★</span> 10
-                                            </td>
-                                            <td class="px-3 py-2 text-center">2</td>
-                                            <td class="px-3 py-2 text-center">1</td>
+                                    @empty
+                                        <tr>
+                                            <td colspan="5" class="px-6 py-4 text-center text-gray-500">No users found</td>
                                         </tr>
-                                        <tr class="hover:bg-gray-50">
-                                            <td class="px-3 py-2 text-center font-medium">3</td>
-                                            <td class="px-3 py-2 text-left">Dionabel T. De Guzman</td>
-                                            <td class="px-3 py-2 text-center">
-                                                <span class="text-yellow-500">★</span> 5
-                                            </td>
-                                            <td class="px-3 py-2 text-center">1</td>
-                                            <td class="px-3 py-2 text-center">1</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+                                    @endforelse
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
