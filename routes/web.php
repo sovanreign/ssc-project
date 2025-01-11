@@ -8,6 +8,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\DiscussionController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -35,9 +36,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/leaderboard', [LeaderboardController::class, 'index'])->name('leaderboard');
     Route::get('/reports', [ReportController::class, 'index'])->name('reports');
 
-    Route::get('/discussions', function () {
-        return view('discussions.index');
-    })->name('discussions.index');
+    // Discussion routes
+    Route::get('/discussions', [DiscussionController::class, 'index'])->name('discussions.index');
+    Route::post('/discussions', [DiscussionController::class, 'store'])->name('discussions.store');
+    Route::get('/discussions/{discussion}', [DiscussionController::class, 'show'])->name('discussions.show');
+    Route::post('/discussions/{discussion}/messages', [DiscussionController::class, 'storeMessage'])->name('discussions.messages.store');
+    Route::post('/discussions/{discussion}/end', [DiscussionController::class, 'endDiscussion'])->name('discussions.end');
 
     Route::post('/projects/{project}/complete', [ProjectController::class, 'markAsComplete'])->name('projects.complete');
 

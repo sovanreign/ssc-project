@@ -4,7 +4,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ config('app.name', 'SSC Project Management Tool') }}</title>
+    <title>{{ config('app.name', 'Laravel') }}</title>
+    
+    <!-- Scripts and Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-gray-100">
@@ -109,16 +111,21 @@
                             </div>
                         </div>
 
-                        <!-- Administrator Dropdown -->
+                        <!-- Admin Menu -->
                         <div class="relative">
-                            <button id="adminDropdown" class="flex items-center space-x-2 focus:outline-none">
-                                <span class="font-semibold">Administrator</span>
-                                <svg class="w-4 h-4 transition-transform" id="adminArrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <button id="adminButton" class="flex items-center space-x-2 text-gray-800 hover:text-gray-600 focus:outline-none">
+                                <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                    </svg>
+                                </div>
+                                <span>Administrator</span>
+                                <svg id="adminArrow" class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                                 </svg>
                             </button>
-                            
-                            <!-- Dropdown Menu -->
+
+                            <!-- Admin Dropdown Menu -->
                             <div id="adminMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
                                 <a href="#profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                     <svg class="inline-block w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -149,34 +156,41 @@
                 </div>
             </div>
 
-            <!-- Page Content -->
-            @yield('content')
+            <!-- Main Content Area -->
+            <div class="mt-16">
+                @yield('content')
+            </div>
         </div>
     </div>
 
     <script>
-        // Administrator dropdown functionality
-        const adminDropdown = document.getElementById('adminDropdown');
+        // Admin dropdown functionality
+        const adminButton = document.getElementById('adminButton');
         const adminMenu = document.getElementById('adminMenu');
         const adminArrow = document.getElementById('adminArrow');
-        
-        function toggleDropdown() {
+
+        function toggleAdminMenu() {
             adminMenu.classList.toggle('hidden');
             adminArrow.classList.toggle('rotate-180');
         }
-        
-        adminDropdown.addEventListener('click', (e) => {
+
+        // Toggle admin menu on button click
+        adminButton.addEventListener('click', (e) => {
             e.stopPropagation();
-            toggleDropdown();
+            toggleAdminMenu();
+            // Close notification menu when opening admin menu
+            notificationMenu.classList.add('hidden');
         });
-        
+
+        // Close admin menu when clicking outside
         document.addEventListener('click', (e) => {
-            if (!adminDropdown.contains(e.target)) {
+            if (!adminButton.contains(e.target)) {
                 adminMenu.classList.add('hidden');
                 adminArrow.classList.remove('rotate-180');
             }
         });
-        
+
+        // Close admin menu when pressing escape key
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 adminMenu.classList.add('hidden');
@@ -192,25 +206,28 @@
             notificationMenu.classList.toggle('hidden');
         }
 
+        // Toggle notifications on button click
         notificationButton.addEventListener('click', (e) => {
             e.stopPropagation();
             toggleNotifications();
+            // Close admin menu when opening notifications
             adminMenu.classList.add('hidden');
             adminArrow.classList.remove('rotate-180');
         });
 
+        // Close notification menu when clicking outside
         document.addEventListener('click', (e) => {
             if (!notificationButton.contains(e.target)) {
                 notificationMenu.classList.add('hidden');
             }
         });
 
+        // Close notification menu when pressing escape key
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 notificationMenu.classList.add('hidden');
             }
         });
     </script>
-    @stack('scripts')
 </body>
 </html> 
