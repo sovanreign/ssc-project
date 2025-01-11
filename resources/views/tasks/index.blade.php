@@ -79,11 +79,9 @@
             <tbody class="divide-y divide-gray-200">
                 @php $taskNumber = 1; @endphp
                 @forelse($tasks as $task)
-                    <tr class="hover:bg-gray-50 transition-colors duration-200">
+                    <tr class="hover:bg-gray-50 transition-colors duration-200 cursor-pointer" onclick="showTaskDetails({{ $task->id }})">
                         <td class="px-6 py-4 text-center">{{ $taskNumber++ }}</td>
-                        <td class="px-6 py-4">
-                            <a href="#" onclick="showTaskDetails({{ $task->id }})" class="text-blue-600 hover:text-blue-800">{{ $task->name }}</a>
-                        </td>
+                        <td class="px-6 py-4 text-blue-600 font-medium">{{ $task->name }}</td>
                         <td class="px-6 py-4 text-gray-600">
                             {{ Str::limit($task->description, 50) }}
                         </td>
