@@ -13,14 +13,17 @@ class TaskController extends Controller
     public function index(Request $request)
     {
         try {
-            $query = Task::query();
+            $query = Task::with(['project', 'assignedUser']);
+
+            // Update statuses before filtering
+            Task::where('status', '!=', 'completed')->get()->each->updateStatusBasedOnDates();
 
             // Filter by status if provided
-            if ($request->has('status')) {
+            if ($request->has('status') && $request->status !== 'all') {
                 $query->where('status', $request->status);
             }
 
-            $tasks = $query->orderBy('id', 'asc')->get();
+            $tasks = $query->orderBy('created_at', 'desc')->get();
             $projects = Project::orderBy('name')->get();
             $users = User::orderBy('name')->get();
 
@@ -44,12 +47,20 @@ class TaskController extends Controller
                 'name' => 'required|string|max:255',
                 'description' => 'nullable|string',
                 'project_id' => 'required|exists:projects,id',
+                'assigned_to' => 'required|exists:users,id',
                 'start_date' => 'required|date',
                 'end_date' => 'required|date|after_or_equal:start_date',
-                'assigned_to' => 'required|exists:users,id',
             ]);
 
-            Task::create($validated);
+            $task = Task::create([
+                'name' => $validated['name'],
+                'description' => $validated['description'],
+                'project_id' => $validated['project_id'],
+                'assigned_to' => $validated['assigned_to'],
+                'status' => 'todo',
+                'start_date' => $validated['start_date'],
+                'end_date' => $validated['end_date'],
+            ]);
 
             DB::commit();
             return redirect()->route('tasks.index')
@@ -132,6 +143,43 @@ class TaskController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Error marking task as complete'
+            ], 500);
+        }
+    }
+
+    public function rateTask(Task $task, Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            $validated = $request->validate([
+                'rating' => 'required|integer|min:1|max:5'
+            ]);
+
+            $task->update([
+                'rating' => $validated['rating']
+            ]);
+
+            // Update user's stars based on completed tasks and ratings
+            $user = $task->assignedUser;
+            $totalStars = $user->tasks()
+                ->where('status', 'completed')
+                ->sum('rating');
+            
+            $user->update([
+                'total_stars' => $totalStars
+            ]);
+
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'Task rated successfully'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Error rating task: ' . $e->getMessage()
             ], 500);
         }
     }

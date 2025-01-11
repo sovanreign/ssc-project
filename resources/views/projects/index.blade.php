@@ -71,9 +71,10 @@
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-200">
+                @php $projectNumber = 1; @endphp
                 @forelse($projects as $project)
                     <tr class="hover:bg-gray-50 transition-colors duration-200 cursor-pointer" onclick="showProjectDetails({{ $project->id }})">
-                        <td class="px-6 py-4 text-center text-blue-600 font-medium">{{ $project->id }}</td>
+                        <td class="px-6 py-4 text-center text-blue-600 font-medium">{{ $projectNumber++ }}</td>
                         <td class="px-6 py-4 text-blue-600 font-medium">{{ $project->name }}</td>
                         <td class="px-6 py-4 text-gray-600">
                             {{ Str::limit($project->description, 100) }}
@@ -142,10 +143,10 @@
 </div>
 
 <!-- Project Details Modal -->
-<div id="projectDetailsModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full">
-    <div class="relative top-20 mx-auto p-5 border w-4/5 shadow-lg rounded-md bg-white">
-        <div class="flex justify-between items-center">
-            <h3 class="text-2xl font-bold">Project Details</h3>
+<div id="projectDetailsModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
+    <div class="relative top-20 mx-auto p-5 border w-[600px] shadow-lg rounded-md bg-white">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold">Project Details</h3>
             <button onclick="closeProjectDetails()" class="text-gray-600 hover:text-gray-800">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -153,30 +154,30 @@
             </button>
         </div>
         <div class="mt-4">
-            <div class="space-y-4">
+            <div class="space-y-6">
                 <div>
-                    <h4 class="text-lg font-semibold">Project Name</h4>
-                    <p id="projectName" class="text-gray-600"></p>
+                    <h4 class="text-lg font-semibold text-gray-700">Project Name</h4>
+                    <p id="projectName" class="mt-1 text-gray-600 bg-gray-50 p-3 rounded-md"></p>
                 </div>
                 <div>
-                    <h4 class="text-lg font-semibold">Description</h4>
-                    <p id="projectDescription" class="text-gray-600"></p>
+                    <h4 class="text-lg font-semibold text-gray-700">Description</h4>
+                    <p id="projectDescription" class="mt-1 text-gray-600 bg-gray-50 p-3 rounded-md min-h-[100px] whitespace-pre-wrap"></p>
                 </div>
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-2 gap-6">
                     <div>
-                        <h4 class="text-lg font-semibold">Start Date</h4>
-                        <p id="projectStartDate" class="text-gray-600"></p>
+                        <h4 class="text-lg font-semibold text-gray-700">Start Date</h4>
+                        <p id="projectStartDate" class="mt-1 text-gray-600 bg-gray-50 p-3 rounded-md"></p>
                     </div>
                     <div>
-                        <h4 class="text-lg font-semibold">Due Date</h4>
-                        <p id="projectEndDate" class="text-gray-600"></p>
+                        <h4 class="text-lg font-semibold text-gray-700">Due Date</h4>
+                        <p id="projectDueDate" class="mt-1 text-gray-600 bg-gray-50 p-3 rounded-md"></p>
                     </div>
                 </div>
                 <div>
-                    <h4 class="text-lg font-semibold">Status</h4>
-                    <p id="projectStatus" class="text-gray-600"></p>
+                    <h4 class="text-lg font-semibold text-gray-700">Status</h4>
+                    <p id="projectStatus" class="mt-1"></p>
                 </div>
-                <div class="flex justify-end mt-6">
+                <div class="flex justify-end mt-6 space-x-4">
                     <button id="completeProjectBtn" 
                             onclick="completeProject(document.querySelector('#projectDetailsModal').dataset.projectId)"
                             class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-all duration-300">
@@ -229,10 +230,22 @@
             .then(response => response.json())
             .then(project => {
                 document.getElementById('projectName').textContent = project.name;
-                document.getElementById('projectDescription').textContent = project.description;
+                document.getElementById('projectDescription').textContent = project.description || 'No description provided';
                 document.getElementById('projectStartDate').textContent = project.start_date;
-                document.getElementById('projectEndDate').textContent = project.end_date;
-                document.getElementById('projectStatus').textContent = project.status.replace('_', ' ').toUpperCase();
+                document.getElementById('projectDueDate').textContent = project.end_date;
+                
+                // Create status badge
+                const statusBadge = document.createElement('span');
+                statusBadge.className = `inline-flex items-center justify-center px-3 py-1 text-sm font-medium rounded-full 
+                    ${project.status === 'todo' ? 'bg-gray-100 text-gray-800' :
+                    project.status === 'in_progress' ? 'bg-yellow-100 text-yellow-800' :
+                    project.status === 'completed' ? 'bg-green-100 text-green-800' :
+                    'bg-red-100 text-red-800'}`;
+                statusBadge.textContent = project.status.replace('_', ' ').toUpperCase();
+                
+                const statusContainer = document.getElementById('projectStatus');
+                statusContainer.innerHTML = '';
+                statusContainer.appendChild(statusBadge);
                 
                 // Store project ID for complete button
                 document.querySelector('#projectDetailsModal').dataset.projectId = project.id;
@@ -272,6 +285,20 @@
             }
         });
     }
+
+    // Close modal when clicking outside
+    document.getElementById('projectDetailsModal').addEventListener('click', (e) => {
+        if (e.target === document.getElementById('projectDetailsModal')) {
+            closeProjectDetails();
+        }
+    });
+
+    // Close modal when pressing escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeProjectDetails();
+        }
+    });
 </script>
 @endpush
 @endsection 

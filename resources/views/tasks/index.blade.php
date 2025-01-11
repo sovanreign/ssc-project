@@ -77,10 +77,13 @@
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-200">
+                @php $taskNumber = 1; @endphp
                 @forelse($tasks as $task)
-                    <tr class="hover:bg-gray-50 transition-colors duration-200 cursor-pointer" onclick="showTaskDetails({{ $task->id }})">
-                        <td class="px-6 py-4 text-center text-blue-600 font-medium">{{ $task->id }}</td>
-                        <td class="px-6 py-4 text-blue-600 font-medium">{{ $task->name }}</td>
+                    <tr class="hover:bg-gray-50 transition-colors duration-200">
+                        <td class="px-6 py-4 text-center">{{ $taskNumber++ }}</td>
+                        <td class="px-6 py-4">
+                            <a href="#" onclick="showTaskDetails({{ $task->id }})" class="text-blue-600 hover:text-blue-800">{{ $task->name }}</a>
+                        </td>
                         <td class="px-6 py-4 text-gray-600">
                             {{ Str::limit($task->description, 50) }}
                         </td>
@@ -172,10 +175,10 @@
 </div>
 
 <!-- Task Details Modal -->
-<div id="taskDetailsModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full">
-    <div class="relative top-20 mx-auto p-5 border w-4/5 shadow-lg rounded-md bg-white">
-        <div class="flex justify-between items-center">
-            <h3 class="text-2xl font-bold">Task Details</h3>
+<div id="taskDetailsModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden" data-task-id="">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold">Task Details</h3>
             <button onclick="closeTaskDetails()" class="text-gray-600 hover:text-gray-800">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -210,7 +213,21 @@
                     <h4 class="text-lg font-semibold">Status</h4>
                     <p id="taskStatus" class="text-gray-600"></p>
                 </div>
-                <div class="flex justify-end mt-6">
+                <div class="flex justify-end mt-6 space-x-4">
+                    <div id="ratingSection" class="hidden">
+                        <div class="star-rating">
+                            <input type="radio" id="star5" name="rating" value="5" />
+                            <label for="star5">★</label>
+                            <input type="radio" id="star4" name="rating" value="4" />
+                            <label for="star4">★</label>
+                            <input type="radio" id="star3" name="rating" value="3" />
+                            <label for="star3">★</label>
+                            <input type="radio" id="star2" name="rating" value="2" />
+                            <label for="star2">★</label>
+                            <input type="radio" id="star1" name="rating" value="1" />
+                            <label for="star1">★</label>
+                        </div>
+                    </div>
                     <button id="completeTaskBtn" 
                             onclick="completeTask(document.querySelector('#taskDetailsModal').dataset.taskId)"
                             class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-all duration-300">
@@ -272,12 +289,22 @@
                 // Store task ID for complete button
                 document.querySelector('#taskDetailsModal').dataset.taskId = task.id;
                 
-                // Show/hide complete button based on status
+                // Show/hide complete button and rating section based on status
                 const completeBtn = document.getElementById('completeTaskBtn');
+                const ratingSection = document.getElementById('ratingSection');
+                
                 if (task.status === 'completed') {
                     completeBtn.classList.add('hidden');
+                    if (!task.rating) {
+                        ratingSection.classList.remove('hidden');
+                        // Set up rating handlers
+                        document.querySelectorAll('.star-rating input').forEach(input => {
+                            input.onclick = () => rateTask(task.id, input.value);
+                        });
+                    }
                 } else {
                     completeBtn.classList.remove('hidden');
+                    ratingSection.classList.add('hidden');
                 }
                 
                 document.getElementById('taskDetailsModal').classList.remove('hidden');
@@ -299,6 +326,23 @@
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
             }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.reload();
+            }
+        });
+    }
+
+    function rateTask(taskId, rating) {
+        fetch(`/tasks/${taskId}/rate`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({ rating: rating })
         })
         .then(response => response.json())
         .then(data => {

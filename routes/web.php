@@ -45,4 +45,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/projects/{project}/complete', [ProjectController::class, 'markAsComplete'])->name('projects.complete');
 
     Route::post('/tasks/{task}/complete', [TaskController::class, 'markAsComplete'])->name('tasks.complete');
+
+    Route::post('/tasks/{task}/rate', [TaskController::class, 'rateTask'])->name('tasks.rate');
 });

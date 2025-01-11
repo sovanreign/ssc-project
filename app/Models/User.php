@@ -22,6 +22,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'total_stars'
     ];
 
     /**
@@ -68,6 +69,9 @@ class User extends Authenticatable
 
     public function getStarsAttribute()
     {
-        return $this->tasks()->where('status', 'completed')->count() * 5;
+        return $this->tasks()
+            ->where('status', 'completed')
+            ->whereNotNull('rating')
+            ->sum('rating');
     }
 }
