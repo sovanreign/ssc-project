@@ -52,8 +52,9 @@
             </div>
 
             <!-- Right side - Logo -->
-            <div class="w-1/2 p-8 flex items-center justify-center">
-                <img src="{{ asset('images/ssc-logo.png') }}" alt="SSC Logo" class="max-w-xs">
+            <div class="w-1/2 p-8 flex flex-col items-center justify-center">
+                <img src="{{ asset('images/ssc-logo.png') }}" alt="SSC Logo" class="max-w-xs mb-4">
+                <h1 class="text-2xl font-bold text-white">Project Management Tool</h1>
             </div>
         </div>
     </div>
