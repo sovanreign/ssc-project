@@ -24,6 +24,9 @@ class DiscussionController extends Controller
             'description' => 'required|string'
         ]);
 
+        // Generate a unique conversation ID
+        $validated['conversation_id'] = uniqid('conv_', true);
+
         Discussion::create($validated);
 
         return redirect()->route('discussions.index')

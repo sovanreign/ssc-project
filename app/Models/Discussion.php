@@ -10,7 +10,8 @@ class Discussion extends Model
         'title',
         'location',
         'date',
-        'description'
+        'description',
+        'conversation_id'
     ];
 
     protected $casts = [

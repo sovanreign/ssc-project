@@ -6,7 +6,7 @@
 ## **Database**
 - **MySQL**: Used for data storage.
 - **Credentials**:
-  - **Username**: `admin@admin.comg`
+  - **Username**: `admin@admin.com`
   - **Password**: `brucegwapo`
 - **Tables**:
   1. **`users`**:
